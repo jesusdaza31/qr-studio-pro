@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Generador de Códigos QR Personalizados</title>
+  <meta name="description" content="Crea códigos QR con imagen, logo, nombres y frases personalizadas. Descargable desde cualquier celular y 100% estático.">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Favicon SVG inline -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><path d='M25 25h20v20h-20zM55 25h20v20h-20zM25 55h20v20h-20zM60 60h15v15h-15z' fill='white'/></svg>">
+</head>
+<body>
+
+  <!-- Encabezado de la App -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">QR Studio Pro</h1>
+          <p class="brand-sub">Generador de Códigos QR con Logos y Mensajes</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="author-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Jesús Orozco
+        </span>
+        <span class="badge-tag">100% Offline & Privado</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barra de navegación rápida para Móviles -->
+  <div class="mobile-nav-bar">
+    <div class="mobile-nav-pills">
+      <button type="button" class="mobile-nav-btn active" id="btnTabEdit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        Personalizar
+      </button>
+      <button type="button" class="mobile-nav-btn" id="btnTabPreview">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        Ver QR & Descargar
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido Principal -->
+  <main class="app-main" id="appMain" data-tab="edit">
+
+    <!-- Panel de Edición y Controles -->
+    <div class="editor-panel">
+
+      <!-- 1. Tipo de Contenido -->
+      <section class="card">
+        <h2 class="section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          1. ¿Qué información tendrá el QR?
+        </h2>
+
+        <!-- Selector de pestañas -->
+        <div class="type-selector">
+          <button type="button" class="type-btn active" data-type="webpage">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Página Web
+          </button>
+          <button type="button" class="type-btn" data-type="url">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            Enlace Web
+          </button>
+          <button type="button" class="type-btn" data-type="whatsapp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            WhatsApp
+          </button>
+          <button type="button" class="type-btn" data-type="text">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Texto Libre
+          </button>
+          <button type="button" class="type-btn" data-type="wifi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            Red WiFi
+          </button>
+          <button type="button" class="type-btn" data-type="phone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            Teléfono
+          </button>
+          <button type="button" class="type-btn" data-type="email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            Email
+          </button>
+        </div>
+
+        <!-- Formulario: Página Web con 3 Templates (Online Vercel) -->
+        <div id="form-webpage" class="type-content">
+          <div class="vercel-badge-banner">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 22.525H0l12-21.05 12 21.05z"/>
+            </svg>
+            <div>
+              <strong>Modo Online para Vercel</strong>
+              <p>Al escanear el QR se abrirá una hermosa página web interactiva con la plantilla seleccionada. El QR será súper liviano y fácil de leer.</p>
+            </div>
+          </div>
+
+          <!-- Selector de Templates -->
+          <div class="form-group" style="margin-top: 16px;">
+            <label class="form-label">Selecciona el Template de tu Página Web:</label>
+            <div class="templates-grid">
+              <div class="template-card active" data-template="1">
+                <div class="template-preview-badge">Template 1</div>
+                <div class="template-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                </div>
+                <div class="template-info">
+                  <strong>Elegante & Editorial</strong>
+                  <span>Diseño de lujo, tipografía fina, tarjeta dorada / oscura para invitaciones o dedicatorias</span>
+                </div>
+              </div>
+
+              <div class="template-card" data-template="2">
+                <div class="template-preview-badge">Template 2</div>
+                <div class="template-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                </div>
+                <div class="template-info">
+                  <strong>Sobre Interactivo 3D</strong>
+                  <span>Sobre animado con sello de cera, lluvia de partículas, dedicatoria y reacción interactiva</span>
+                </div>
+              </div>
+
+              <div class="template-card" data-template="3">
+                <div class="template-preview-badge">Template 3</div>
+                <div class="template-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+                </div>
+                <div class="template-info">
+                  <strong>Tarjeta Digital & Redes</strong>
+                  <span>Bio personal / profesional con foto avatar, mensaje y enlaces directos a WhatsApp e Instagram</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campos de Personalización de la Página -->
+          <div class="controls-grid" style="margin-top: 14px;">
+            <div class="form-group">
+              <label class="form-label" for="webTo">Para (Destinatario o Nombre):</label>
+              <input type="text" id="webTo" class="form-input" placeholder="Ej: Sofia, Clientes, Familia..." value="Mi persona favorita">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="webFrom">De parte de (Autor o Firma):</label>
+              <input type="text" id="webFrom" class="form-input" placeholder="Tu nombre" value="Jesús Orozco">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="webTitle">Título principal de la página:</label>
+            <input type="text" id="webTitle" class="form-input" placeholder="Ej: Una Ocasión Especial, Bienvenidos, Mi Portafolio..." value="Un detalle especial para ti">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="webMsg">Mensaje, dedicatoria o presentación:</label>
+            <textarea id="webMsg" class="form-textarea" rows="4" placeholder="Escribe aquí tu mensaje...">Quería prepararte este detalle especial en esta página web interactiva. Gracias por estar siempre presente y compartir grandes momentos. ¡Un saludo con mucho aprecio!</textarea>
+          </div>
+
+          <div class="controls-grid">
+            <div class="form-group">
+              <label class="form-label" for="webTheme">Estilo de Color de la Página:</label>
+              <select id="webTheme" class="form-select">
+                <option value="gold">Dorado Luxury (Fondo oscuro & detalles dorados)</option>
+                <option value="rose">Elegante Carmesí (Romántico & distinguido)</option>
+                <option value="dark">Minimalista Nocturno (Gris oscuro moderno)</option>
+                <option value="blue">Azul Cyber / Corporativo (Tecnológico)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="webImage">Foto o Imagen de la página (URL opcional):</label>
+              <input type="url" id="webImage" class="form-input" placeholder="https://ejemplo.com/foto.jpg" value="">
+              <p class="form-helper">Pega un link de imagen de internet, Imgur o Unsplash.</p>
+            </div>
+          </div>
+
+          <!-- Campos específicos para Template 3 (Enlaces de contacto) -->
+          <div id="template3Fields" style="display: none; margin-top: 10px;">
+            <label class="form-label">Enlaces de contacto (Para Template 3):</label>
+            <div class="controls-grid">
+              <div class="form-group">
+                <label class="form-label" for="webWa">Número de WhatsApp (con código de país):</label>
+                <input type="tel" id="webWa" class="form-input" placeholder="Ej: 521234567890">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="webIg">Instagram (usuario o link):</label>
+                <input type="text" id="webIg" class="form-input" placeholder="ej: mi_usuario">
+              </div>
+            </div>
+          </div>
+
+          <!-- Enlace Base Vercel -->
+          <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label" for="webVercelUrl">URL de tu proyecto en Vercel (opcional si ya está subido):</label>
+            <input type="url" id="webVercelUrl" class="form-input" placeholder="https://tu-proyecto.vercel.app">
+            <p class="form-helper">Al subir tu carpeta a Vercel, el sistema detecta la URL automáticamente. Si estás en local, pon aquí tu link de Vercel para generar el QR final.</p>
+          </div>
+
+          <!-- Botones de Prueba en Vivo (Simulador Móvil y Pestaña) -->
+          <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-top: 14px;">
+            <button type="button" id="btnPreviewModal" class="btn-primary" style="font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              <span>Probar en Pantalla</span>
+            </button>
+            <button type="button" id="btnPreviewWebpage" class="btn-secondary" style="font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              <span>Pestaña Nueva</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Formulario: Enlace Web -->
+        <div id="form-url" class="type-content" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="inputUrl">Dirección Web o Enlace (URL):</label>
+            <input type="url" id="inputUrl" class="form-input" placeholder="https://ejemplo.com o mi-perfil" value="https://instagram.com">
+            <p class="form-helper">Puede ser tu página web, catálogo, Instagram, TikTok, menú, etc.</p>
+          </div>
+        </div>
+
+        <!-- Formulario: WhatsApp -->
+        <div id="form-whatsapp" class="type-content" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="inputWaPhone">Número de WhatsApp (con código de país):</label>
+            <input type="tel" id="inputWaPhone" class="form-input" placeholder="Ej: 521234567890 o 573001234567">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputWaMsg">Mensaje automático predeterminado (opcional):</label>
+            <input type="text" id="inputWaMsg" class="form-input" placeholder="¡Hola! Me gustaría pedir información...">
+          </div>
+        </div>
+
+        <!-- Formulario: Texto Libre -->
+        <div id="form-text" class="type-content" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="inputText">Texto, dedicatoria o mensaje secreto:</label>
+            <textarea id="inputText" class="form-textarea" placeholder="Escribe aquí tu mensaje, carta, clave o texto largo..."></textarea>
+          </div>
+        </div>
+
+        <!-- Formulario: WiFi -->
+        <div id="form-wifi" class="type-content" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="inputWifiSsid">Nombre de la red WiFi (SSID):</label>
+            <input type="text" id="inputWifiSsid" class="form-input" placeholder="Mi_WiFi_Casa">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputWifiPass">Contraseña:</label>
+            <input type="text" id="inputWifiPass" class="form-input" placeholder="Contraseña de la red">
+          </div>
+          <div class="controls-grid">
+            <div class="form-group">
+              <label class="form-label" for="inputWifiType">Seguridad:</label>
+              <select id="inputWifiType" class="form-select">
+                <option value="WPA">WPA / WPA2 / WPA3 (Común)</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">Sin contraseña</option>
+              </select>
+            </div>
+            <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:28px;">
+              <input type="checkbox" id="inputWifiHidden" style="width:18px; height:18px;">
+              <label for="inputWifiHidden" style="font-size:0.85rem; font-weight:600; cursor:pointer;">Red oculta</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario: Teléfono -->
+        <div id="form-phone" class="type-content" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="inputPhone">Número de teléfono a marcar:</label>
+            <input type="tel" id="inputPhone" class="form-input" placeholder="+52 123 456 7890">
+          </div>
+        </div>
+
+        <!-- Formulario: Email -->
+        <div id="form-email" class="type-content" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="inputEmail">Correo electrónico destinatario:</label>
+            <input type="email" id="inputEmail" class="form-input" placeholder="contacto@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputEmailSubject">Asunto:</label>
+            <input type="text" id="inputEmailSubject" class="form-input" placeholder="Consulta sobre...">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="inputEmailBody">Cuerpo del correo:</label>
+            <textarea id="inputEmailBody" class="form-textarea" placeholder="Escribe aquí el contenido..."></textarea>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 2. Personalización de Textos (Nombre y Frase) -->
+      <section class="card">
+        <h2 class="section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+          </svg>
+          2. Nombre, Frase y Dedicatoria
+        </h2>
+
+        <div class="form-group">
+          <label class="form-label" for="inputName">Nombre o Título superior:</label>
+          <input type="text" id="inputName" class="form-input" value="¡Escanea este código!" placeholder="Ej: Mi Negocio, Para María, Menú del Día...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputPhrase">Frase, Mensaje o Subtítulo inferior:</label>
+          <input type="text" id="inputPhrase" class="form-input" value="Apunta la cámara de tu celular aquí" placeholder="Ej: Conéctate al instante, Te amo mucho, etc.">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fontSelect">Estilo de letra / Tipografía:</label>
+          <select id="fontSelect" class="form-select">
+            <option value="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif">Moderna y Limpia (Sans-Serif)</option>
+            <option value="Georgia, Cambria, 'Times New Roman', serif">Elegante y Clásica (Serif)</option>
+            <option value="'Courier New', Courier, monospace">Tecnológica (Monospace)</option>
+            <option value="'Comic Sans MS', 'Segoe Print', cursive">Informal / Amigable (Cursive)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- 3. Imagen / Logo en el Centro -->
+      <section class="card">
+        <h2 class="section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          3. Imagen o Logo en el Centro
+        </h2>
+
+        <!-- Zona para subir imagen -->
+        <label class="image-upload-zone" id="imageUploadZone" for="logoFileInput">
+          <input type="file" id="logoFileInput" accept="image/*">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="margin-bottom:8px;">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <p style="font-weight: 600; font-size: 0.9rem; color: #334155;">Toca aquí para subir una foto o logo</p>
+          <p class="form-helper">Acepta fotos de tu galería, PNG con transparencia o JPG</p>
+        </label>
+
+        <!-- Preview del logo subido -->
+        <div id="logoPreviewContainer" class="image-preview-badge" style="display: none;">
+          <img id="logoPreviewThumb" src="" alt="Logo">
+          <div>
+            <span style="font-weight:600; font-size:0.85rem;">Imagen seleccionada</span>
+          </div>
+          <button type="button" id="btnRemoveLogo" class="btn-remove-logo">Quitar</button>
+        </div>
+
+        <!-- Iconos rápidos predeterminados con marcas y utilidades -->
+        <div style="margin-top: 16px;">
+          <label class="form-label">O añade un logo o icono de marca:</label>
+          <div class="preset-logos-grid">
+            <button type="button" class="preset-logo-btn" data-icon="whatsapp">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#25D366"/><path fill="#fff" d="M35.2 29.8c-.5-.2-2.8-1.4-3.2-1.5-.4-.2-.8-.2-1.1.2s-1.3 1.5-1.5 1.8-.6.3-1.1.1c-.5-.2-2.2-.8-4.2-2.6-1.5-1.4-2.6-3.1-2.9-3.6s0-.8.2-1.1c.2-.2.5-.6.8-.9s.4-.5.5-.9c.2-.3.1-.7 0-.9-.2-.3-1.1-2.7-1.5-3.7-.4-1-.8-.8-1.1-.9h-1c-.3 0-1 .1-1.5.7-.5.5-2 1.9-2 4.7s2.1 5.5 2.4 5.9c.3.4 4 6.2 9.8 8.7 1.4.6 2.5.9 3.3 1.2 1.4.4 2.7.4 3.7.2 1.1-.2 3.4-1.4 3.9-2.7.5-1.3.5-2.5.3-2.7-.2-.2-.6-.3-1.1-.5z"/></svg></span>
+              WhatsApp
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="instagram">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><rect width="48" height="48" rx="13" fill="#E4405F"/><circle cx="24" cy="24" r="7" fill="none" stroke="#fff" stroke-width="3"/><circle cx="34" cy="14" r="2" fill="#fff"/></svg></span>
+              Instagram
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="tiktok">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#000"/><path fill="#25F4EE" d="M28 17a6 6 0 0 0 4 1.5v-3a4 4 0 0 1-3-1V8h-3v14a3 3 0 1 1-3-3v-3a6 6 0 1 0 6 6V17z"/></svg></span>
+              TikTok
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="youtube">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#FF0000"/><path fill="#fff" d="M20 18l11 6-11 6z"/></svg></span>
+              YouTube
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="facebook">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#1877F2"/><path fill="#fff" d="M26 36V24h4l.5-4h-4.5v-2.5c0-1.2.3-2 2-2h2.5V11c-.5-.1-1.8-.2-3.5-.2-3.5 0-6 2.1-6 6v3.2H17v4h4V36h5z"/></svg></span>
+              Facebook
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="spotify">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#1DB954"/><path fill="#fff" d="M31 29c-4-2.5-9-3-15-1.7-.5.1-.9-.2-1-.7-.1-.5.2-.9.7-1 6.5-1.5 12.1-.9 16.6 1.9.4.3.6.8.3 1.2-.3.4-.8.6-1.6.3zm1.8-4.2c-4.8-3-12-3.8-17.6-2-.6.2-1.3-.2-1.5-.8s.2-1.3.8-1.5c6.5-2 14.5-1.1 20 2.3.6.4.7 1.2.4 1.7-.4.6-1.3.7-2.1.3zm.2-4.5c-5.8-3.5-15.3-3.8-20.8-2.1-.8.2-1.7-.2-1.9-1.1-.2-.8.2-1.7 1.1-1.9 6.4-1.9 17-1.5 23.6 2.4.7.4 1 1.4.5 2.1-.4.8-1.7 1-2.5.6z"/></svg></span>
+              Spotify
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="maps">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#EA4335"/><path fill="#fff" d="M24 13c-4.4 0-8 3.6-8 8 0 6 8 14 8 14s8-8 8-14c0-4.4-3.6-8-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg></span>
+              Ubicación
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="paypal">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#003087"/><path fill="#0079C1" d="M28 17c-.3 2.5-2 5-5 5h-3l-1.5 10h-4l3.8-24h7.5c3.5 0 5.8 1.8 5.4 4.8l-3.2 4.2z"/></svg></span>
+              Pagos
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="wifi">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#3B82F6"/><path fill="#fff" d="M24 14c-5.5 0-10.5 2.2-14.2 5.7l2.8 3.2C15.6 20 19.6 18.5 24 18.5s8.4 1.5 11.4 4.4l2.8-3.2C34.5 16.2 29.5 14 24 14zm0 7c-3.6 0-6.9 1.4-9.3 3.8l2.8 3.2c1.7-1.7 4-2.7 6.5-2.7s4.8 1 6.5 2.7l2.8-3.2C30.9 22.4 27.6 21 24 21zm0 7c-1.8 0-3.3.7-4.5 1.8l4.5 5.2 4.5-5.2c-1.2-1.1-2.7-1.8-4.5-1.8z"/></svg></span>
+              WiFi
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="restaurant">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#D97706"/><path fill="#fff" d="M20 13v9h-2v13h-2.5V22H14V13h1.5v6H17v-6h1.5v6H20zM30 13v9c0 2-1.5 3.5-3.5 3.5V35H24V13c3.5 0 6 1.8 6 0z"/></svg></span>
+              Menú Carta
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="cafe">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#854D0E"/><path fill="#fff" d="M15 19h15v6c0 3.8-3.1 7-7 7h-1c-3.8 0-7-3.1-7-7v-6zm15 2h2a2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5H30v-5zm-17 12h21v2H13v-2z"/></svg></span>
+              Cafetería
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="heart">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#EF4444"/><path fill="#fff" d="M24 34l-1.9-1.7C15.4 26 11 22 11 17c0-4 3.1-7 7.1-7 2.3 0 4.5 1.1 5.9 2.7 1.4-1.6 3.6-2.7 5.9-2.7 4 0 7.1 3 7.1 7 0 5-4.4 9-11.1 15.3L24 34z"/></svg></span>
+              Corazón
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="star">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#F59E0B"/><path fill="#fff" d="M24 12l3.7 7.5 8.3 1.2-6 5.8 1.4 8.2L24 30.8l-7.4 3.9 1.4-8.2-6-5.8 8.3-1.2L24 12z"/></svg></span>
+              Estrella VIP
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="gift">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#8B5CF6"/><path fill="#fff" d="M33 19h-2.2c.3-.5.4-.9.4-1.5 0-2.2-1.8-4-4-4-2 0-3.2 1.5-3.2 1.5s-1.2-1.5-3.2-1.5c-2.2 0-4 1.8-4 4 0 .6.2 1 .4 1.5H15c-1 0-1.8.8-1.8 1.8v3.4h21.6v-3.4c0-1-.8-1.8-1.8-1.8zm-7-3.5c1 0 1.8.8 1.8 1.8 0 .4-.3.7-.7.7h-2.6c0-.7.7-2.5 1.5-2.5zm-3.5 0c.8 0 1.5 1.8 1.5 2.5h-2.6c-.4 0-.7-.3-.7-.7 0-1 .8-1.8 1.8-1.8zM14 26v9c0 1 .8 1.8 1.8 1.8h7.2V26H14zm11 10.8h7.2c1 0 1.8-.8 1.8-1.8V26H25v10.8z"/></svg></span>
+              Regalo
+            </button>
+            <button type="button" class="preset-logo-btn" data-icon="cart">
+              <span class="icon-box"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#10B981"/><path fill="#fff" d="M16 16h3.2l3 11c.2.7.8 1.2 1.6 1.2h10c.7 0 1.4-.5 1.6-1.2l2.5-8.2H19.7M22 33a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm11 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></svg></span>
+              Tienda
+            </button>
+          </div>
+        </div>
+
+        <!-- Ajustes de Logo -->
+        <div class="controls-grid" style="margin-top: 16px;">
+          <div class="form-group">
+            <label class="form-label">Tamaño del Logo:</label>
+            <div class="range-container">
+              <input type="range" id="logoSizeRange" class="range-input" min="14" max="28" value="20">
+              <span id="logoSizeVal" class="range-val">20%</span>
+            </div>
+            <p class="form-helper">Calibrado automáticamente para no afectar el escaneo</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="logoShapeSelect">Forma del marco del logo:</label>
+            <select id="logoShapeSelect" class="form-select">
+              <option value="circle">Circular (Recomendado)</option>
+              <option value="rounded">Bordes suaves (Squircle iOS)</option>
+              <option value="square">Cuadrado moderno</option>
+              <option value="none">Sin fondo (Solo icono)</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Diseño, Marcos y Colores (Acordeón desplegable) -->
+      <div class="accordion open">
+        <div class="accordion-header">
+          <div class="acc-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+              <path d="M2 12h20"></path>
+            </svg>
+            <span>4. Estilo de Marco, Colores y Puntos</span>
+          </div>
+          <svg class="accordion-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </div>
+
+        <div class="accordion-content">
+          <!-- Estilo de Marco / Plantilla -->
+          <div class="form-group">
+            <label class="form-label">Plantilla del Marco:</label>
+            <div class="frames-selector">
+              <div class="frame-btn active" data-frame="card">
+                <div class="frame-preview-thumb">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="13" y2="12"></line></svg>
+                </div>
+                <span>Tarjeta</span>
+              </div>
+              <div class="frame-btn" data-frame="polaroid">
+                <div class="frame-preview-thumb">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><rect x="6" y="5" width="12" height="10" rx="1"></rect><circle cx="12" cy="18" r="1.5" fill="currentColor"></circle></svg>
+                </div>
+                <span>Polaroid</span>
+              </div>
+              <div class="frame-btn" data-frame="badge">
+                <div class="frame-preview-thumb">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 9.5-8 10-4.5-.5-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-4"></path></svg>
+                </div>
+                <span>Insignia</span>
+              </div>
+              <div class="frame-btn" data-frame="dark">
+                <div class="frame-preview-thumb">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"></path></svg>
+                </div>
+                <span>Oscuro</span>
+              </div>
+              <div class="frame-btn" data-frame="pastel">
+                <div class="frame-preview-thumb">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="3" x2="12" y2="21"></line><path d="M12 7h5"></path><path d="M12 12h7"></path><path d="M12 17h4"></path></svg>
+                </div>
+                <span>Gradiente</span>
+              </div>
+              <div class="frame-btn" data-frame="restaurant">
+                <div class="frame-preview-thumb">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"></rect><line x1="8" y1="7" x2="16" y2="7"></line><line x1="8" y1="11" x2="16" y2="11"></line><line x1="8" y1="15" x2="12" y2="15"></line></svg>
+                </div>
+                <span>Menú Mesa</span>
+              </div>
+              <div class="frame-btn" data-frame="none">
+                <div class="frame-preview-thumb">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect></svg>
+                </div>
+                <span>Solo QR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optimización de Escaneo / Densidad -->
+          <div class="form-group" style="margin-top: 16px;">
+            <label class="form-label" for="qrDensitySelect">Optimización de Escaneo (Tamaño de Puntos):</label>
+            <select id="qrDensitySelect" class="form-select">
+              <option value="auto">Automático (Recomendado - Puntos grandes)</option>
+              <option value="M">Fácil Escaneo (Nivel M - Puntos grandes)</option>
+              <option value="Q">Equilibrado (Nivel Q - Recomendado con Logo)</option>
+              <option value="H">Protección Máxima (Nivel H - Más puntos)</option>
+            </select>
+            <p class="form-helper">El modo automático mantiene los puntos grandes para que cualquier celular escanee en 0.1s.</p>
+          </div>
+
+          <!-- Estilo de Puntos y Esquinas -->
+          <div class="controls-grid" style="margin-top: 16px;">
+            <div class="form-group">
+              <label class="form-label" for="dotStyleSelect">Forma de los puntos:</label>
+              <select id="dotStyleSelect" class="form-select">
+                <option value="rounded">Puntos suaves redondeados</option>
+                <option value="square">Cuadrados clásicos</option>
+                <option value="dots">Círculos aislados (Dots)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="eyeStyleSelect">Esquinas (Marcadores):</label>
+              <select id="eyeStyleSelect" class="form-select">
+                <option value="rounded">Redondeadas modernas</option>
+                <option value="square">Cuadradas clásicas</option>
+                <option value="circle">Circulares suaves</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Paleta de Colores -->
+          <div class="controls-grid" style="margin-top: 14px;">
+            <div class="form-group">
+              <label class="form-label">Color del QR:</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="colorDark" class="color-input" value="#1e293b">
+                <span id="colorDarkHex" class="color-hex">#1e293b</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Color de fondo QR:</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="colorLight" class="color-input" value="#ffffff">
+                <span id="colorLightHex" class="color-hex">#ffffff</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fondo de Tarjeta:</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="colorCard" class="color-input" value="#ffffff">
+                <span id="colorCardHex" class="color-hex">#ffffff</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Degradado opcional -->
+          <div style="margin-top: 14px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input type="checkbox" id="useGradient" style="width:18px; height:18px;">
+              <label for="useGradient" style="font-weight:600; font-size:0.85rem; cursor:pointer;">Activar degradado en el QR</label>
+            </div>
+
+            <div id="gradientColorGroup" class="form-group" style="display:none; margin-top:10px;">
+              <label class="form-label">Segundo color del degradado:</label>
+              <div class="color-picker-wrapper">
+                <input type="color" id="colorGradient" class="color-input" value="#4f46e5">
+                <span id="colorGradientHex" class="color-hex">#4f46e5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón para avanzar a la vista previa en celular -->
+      <button type="button" id="btnGoToPreview" class="btn-primary btn-mobile-next">
+        <span>Ver Mi Código QR y Descargar</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+
+    </div>
+
+    <!-- Panel Lateral: Vista Previa y Botones de Descarga -->
+    <div class="preview-panel">
+      <!-- Botón para volver a editar en móvil -->
+      <button type="button" id="btnBackToEdit" class="btn-secondary btn-mobile-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>Volver a Editar Contenido</span>
+      </button>
+
+      <div class="preview-card">
+        <h2 class="section-title" style="margin-bottom: 12px; width: 100%;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          Vista Previa en Vivo
+        </h2>
+
+        <!-- Canvas interactivo con el diseño completo -->
+        <div class="preview-canvas-wrapper">
+          <canvas id="qrCanvas"></canvas>
+        </div>
+
+        <!-- Acciones de Descarga y Compartir -->
+        <div class="preview-actions">
+          <!-- Botón de Descarga Imagen -->
+          <button type="button" id="btnDownload" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Descargar Imagen en HD (PNG)
+          </button>
+
+          <!-- Botón de Descarga PDF -->
+          <button type="button" id="btnDownloadPdf" class="btn-pdf">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Descargar en Documento PDF
+          </button>
+
+          <!-- Acciones secundarias para móviles y PC -->
+          <div class="btn-group-secondary">
+            <button type="button" id="btnShare" class="btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              Compartir en Móvil
+            </button>
+            <button type="button" id="btnCopy" class="btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              Copiar Imagen
+            </button>
+          </div>
+        </div>
+
+        <p class="form-helper" style="text-align: center; margin-top: 14px; line-height: 1.4; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          <span>Compatible con cualquier celular (iPhone y Android). Escaneable al 100% con cámara nativa.</span>
+        </p>
+      </div>
+
+      <!-- Tarjeta informativa / Consejos de uso -->
+      <div class="card" style="padding: 18px;">
+        <h3 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          ¿Cómo abrirla en tu celular?
+        </h3>
+        <p style="font-size: 0.8rem; color: #64748b; line-height: 1.5;">
+          Esta aplicación funciona completamente en tu navegador sin internet. Puedes enviar el archivo <code>index.html</code> a tu celular por WhatsApp, Telegram, o abrirlo con cualquier navegador.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Pie de página / Créditos de desarrollo -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-credit">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+        <span>Creado y desarrollado por <strong>Jesús Orozco</strong></span>
+      </div>
+      <div class="footer-date">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span>30 de septiembre de 2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notificación Toast -->
+  <div id="toast" class="toast">Mensaje</div>
+
+  <!-- Modal Simulador Móvil en Pantalla -->
+  <div id="previewModal" class="preview-modal" style="display: none;">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          <strong>Simulador en Vivo (Vista Celular)</strong>
+        </div>
+        <div class="modal-header-actions">
+          <button type="button" id="btnModalOpenTab" class="btn-modal-action" title="Abrir en pestaña nueva">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Pantalla Completa</span>
+          </button>
+          <button type="button" id="btnModalClose" class="btn-modal-close" title="Cerrar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <iframe id="previewIframe" src="about:blank" title="Vista Previa de la Página Web"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/qrcode.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

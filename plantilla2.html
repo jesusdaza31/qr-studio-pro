@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Plantilla 2 - Sobre Interactivo 3D</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ef4444'/><path d='M20 30h60v40h-60z' fill='none' stroke='white' stroke-width='8'/><path d='M20 30l30 25 30-25' fill='none' stroke='white' stroke-width='8'/></svg>">
+  <style>
+    :root {
+      --primary: #ef4444;
+      --envelope-bg: #1e293b;
+      --envelope-flap: #0f172a;
+      --seal-color: #dc2626;
+      --card-radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 20%, #272115 0%, #0a0805 100%);
+      color: #ffffff;
+      overflow-x: hidden;
+      padding: 24px 16px;
+      perspective: 1000px;
+    }
+
+    body.theme-gold {
+      background: radial-gradient(circle at 50% 20%, #272115 0%, #0a0805 100%);
+    }
+    body.theme-rose {
+      background: radial-gradient(circle at 50% 20%, #4c0519 0%, #0d0407 100%);
+    }
+    body.theme-dark {
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #020617 100%);
+    }
+    body.theme-blue {
+      background: radial-gradient(circle at 50% 20%, #0f172a 0%, #030712 100%);
+    }
+
+    #particlesCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .app-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .envelope-wrapper {
+      width: 100%;
+      height: 300px;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+
+    .envelope-wrapper:hover {
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .envelope {
+      width: 330px;
+      height: 220px;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border-radius: 16px;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 24px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 165px solid transparent;
+      border-right: 165px solid transparent;
+      border-top: 120px solid #334155;
+      transform-origin: top;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 4;
+      filter: drop-shadow(0 6px 6px rgba(0,0,0,0.3));
+    }
+
+    .envelope.open .envelope-flap {
+      transform: rotateX(180deg);
+    }
+
+    .wax-seal {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ef4444, #991b1b);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      position: absolute;
+      top: 90px;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s ease;
+      animation: pulseSeal 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseSeal {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    .envelope.open .wax-seal {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+
+    .envelope-text {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .tap-hint {
+      color: #f59e0b;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-top: 6px;
+      z-index: 2;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .letter-card {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      color: #0f172a;
+      border-radius: var(--card-radius);
+      padding: 34px 28px;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: slideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(60px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .letter-header {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #64748b;
+      margin-bottom: 12px;
+    }
+
+    .letter-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 18px;
+      line-height: 1.25;
+      letter-spacing: -0.5px;
+    }
+
+    .letter-image-container {
+      width: 100%;
+      max-height: 260px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .letter-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .letter-body {
+      font-size: 1.08rem;
+      line-height: 1.75;
+      color: #334155;
+      margin-bottom: 28px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .letter-footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 18px;
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: #64748b;
+    }
+
+    .letter-footer strong {
+      color: #0f172a;
+    }
+
+    .btn-react {
+      background: #fef2f2;
+      color: #ef4444;
+      border: 1px solid #fecaca;
+      border-radius: 9999px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-react:hover {
+      background: #fee2e2;
+      transform: scale(1.05);
+    }
+
+    .page-footer {
+      margin-top: 26px;
+      text-align: center;
+      font-size: 0.76rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body class="theme-gold">
+
+  <!-- Partículas de fondo -->
+  <canvas id="particlesCanvas"></canvas>
+
+  <div class="app-wrapper">
+    
+    <!-- SOBRE 3D INTERACTIVO -->
+    <div class="envelope-wrapper" id="envelopeWrapper">
+      <div class="envelope" id="envelope">
+        <div class="envelope-flap" id="envelopeFlap"></div>
+        <div class="wax-seal" id="waxSeal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+        <div class="envelope-text" id="envelopeHeader">Para: Mi persona favorita</div>
+        <div class="tap-hint">Toca el sobre para abrirlo</div>
+      </div>
+    </div>
+
+    <!-- CARTA INTERNA -->
+    <div class="letter-card" id="letterCard">
+      <div class="letter-header" id="cardRecipient">Para alguien especial</div>
+      <h1 class="letter-title" id="cardTitle">Un detalle especial para ti</h1>
+      
+      <div class="letter-image-container" id="cardImageContainer" style="display: none;">
+        <img src="" alt="Foto" id="cardImage">
+      </div>
+
+      <div class="letter-body" id="cardMessage">
+        Quería prepararte este detalle especial en esta página web interactiva. Gracias por estar siempre presente y compartir grandes momentos. ¡Un saludo con mucho aprecio!
+      </div>
+
+      <div class="letter-footer">
+        <div>
+          <span>Con aprecio, </span>
+          <strong id="cardSender">Jesús Orozco</strong>
+        </div>
+        <button type="button" class="btn-react" id="btnHeart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span id="heartCount">1</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="page-footer">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+      <span>Creado y desarrollado por Jesús Orozco • 30 de septiembre de 2026</span>
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      const search = window.location.search.substring(1);
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(search || hash);
+
+      const to = params.get('to') || 'Mi persona favorita';
+      const title = params.get('t') || 'Un detalle especial para ti';
+      const msg = params.get('m') || 'Quería prepararte este detalle especial en esta página web interactiva. Gracias por estar siempre presente y compartir grandes momentos. ¡Un saludo con mucho aprecio!';
+      const from = params.get('from') || 'Jesús Orozco';
+      const theme = params.get('theme') || 'gold';
+      const img = params.get('img') || '';
+
+      document.body.className = `theme-${theme}`;
+      document.getElementById('envelopeHeader').textContent = to;
+      document.getElementById('cardRecipient').textContent = `Para: ${to}`;
+      document.getElementById('cardTitle').textContent = title;
+      document.getElementById('cardMessage').textContent = msg;
+      document.getElementById('cardSender').textContent = from;
+
+      if (img) {
+        document.getElementById('cardImage').src = img;
+        document.getElementById('cardImageContainer').style.display = 'block';
+      }
+
+      const envelopeWrapper = document.getElementById('envelopeWrapper');
+      const envelope = document.getElementById('envelope');
+      const letterCard = document.getElementById('letterCard');
+
+      envelopeWrapper.addEventListener('click', () => {
+        envelope.classList.add('open');
+        setTimeout(() => {
+          envelopeWrapper.style.display = 'none';
+          letterCard.style.display = 'flex';
+        }, 450);
+      });
+
+      const btnHeart = document.getElementById('btnHeart');
+      const heartCount = document.getElementById('heartCount');
+      let count = 1;
+      btnHeart.addEventListener('click', () => {
+        count++;
+        heartCount.textContent = count;
+      });
+
+      // Canvas particles
+      const pCanvas = document.getElementById('particlesCanvas');
+      const pCtx = pCanvas.getContext('2d');
+      let particles = [];
+
+      function resize() {
+        pCanvas.width = window.innerWidth;
+        pCanvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < 28; i++) {
+          particles.push({
+            x: Math.random() * pCanvas.width,
+            y: Math.random() * pCanvas.height,
+            radius: Math.random() * 2 + 1,
+            speedY: Math.random() * 0.6 + 0.2,
+            speedX: (Math.random() - 0.5) * 0.4,
+            opacity: Math.random() * 0.5 + 0.2
+          });
+        }
+        animate();
+      }
+
+      function animate() {
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.y -= p.speedY;
+          p.x += p.speedX;
+          if (p.y < 0) {
+            p.y = pCanvas.height;
+            p.x = Math.random() * pCanvas.width;
+          }
+          pCtx.beginPath();
+          pCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          pCtx.fillStyle = theme === 'gold' ? `rgba(245, 158, 11, ${p.opacity})` : `rgba(147, 197, 253, ${p.opacity})`;
+          pCtx.fill();
+        }
+        requestAnimationFrame(animate);
+      }
+
+      initParticles();
+    })();
+  </script>
+</body>
+</html>

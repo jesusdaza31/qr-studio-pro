@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Página Web Interactiva</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><path d='M25 25h20v20h-20zM55 25h20v20h-20zM25 55h20v20h-20zM60 60h15v15h-15z' fill='white'/></svg>">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --gold: #d97706;
+      --gold-light: #fef3c7;
+      --card-radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #090d16 100%);
+      color: #ffffff;
+      overflow-x: hidden;
+      padding: 24px 16px;
+      perspective: 1000px;
+    }
+
+    /* Temas de Fondo */
+    body.theme-gold {
+      background: radial-gradient(circle at 50% 20%, #272115 0%, #0a0805 100%);
+    }
+    body.theme-rose {
+      background: radial-gradient(circle at 50% 20%, #4c0519 0%, #0d0407 100%);
+    }
+    body.theme-dark {
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #020617 100%);
+    }
+    body.theme-blue {
+      background: radial-gradient(circle at 50% 20%, #0f172a 0%, #030712 100%);
+    }
+
+    #particlesCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .app-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ==============================================================
+       TEMPLATE 1: ELEGANTE & EDITORIAL (LUXURY CARD)
+       ============================================================== */
+    .template-editorial {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      color: #0f172a;
+      border-radius: var(--card-radius);
+      padding: 36px 28px;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(217, 119, 6, 0.25);
+      border: 2px solid #fde68a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .editorial-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      color: #b45309;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 9999px;
+      margin-bottom: 20px;
+      border: 1px solid #fde68a;
+    }
+
+    .editorial-title {
+      font-family: Georgia, Cambria, "Times New Roman", serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: #1e1b4b;
+      margin-bottom: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .editorial-image-container {
+      width: 100%;
+      max-height: 260px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      border: 1px solid #e2e8f0;
+    }
+
+    .editorial-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .editorial-divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #d97706, #fbbf24);
+      border-radius: 3px;
+      margin: 10px 0 22px;
+    }
+
+    .editorial-quote {
+      font-size: 1.08rem;
+      line-height: 1.7;
+      color: #334155;
+      margin-bottom: 28px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-style: italic;
+      position: relative;
+      padding: 0 10px;
+    }
+
+    .editorial-signature {
+      width: 100%;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .editorial-signature span {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .editorial-signature strong {
+      font-family: Georgia, Cambria, serif;
+      font-size: 1.2rem;
+      color: #0f172a;
+    }
+
+    /* ==============================================================
+       TEMPLATE 2: SOBRE INTERACTIVO 3D
+       ============================================================== */
+    .template-envelope-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .envelope-wrapper {
+      width: 100%;
+      max-width: 400px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .envelope-wrapper:active {
+      transform: scale(0.98);
+    }
+
+    .envelope {
+      width: 100%;
+      height: 250px;
+      background: linear-gradient(135deg, #f43f5e, #be123c);
+      border-radius: 18px;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(244, 63, 94, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    body.theme-gold .envelope {
+      background: linear-gradient(135deg, #d97706, #78350f);
+      border-color: #fde68a;
+    }
+
+    body.theme-blue .envelope {
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+      border-color: #93c5fd;
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 200px solid transparent;
+      border-right: 200px solid transparent;
+      border-top: 130px solid #fb7185;
+      transform-origin: top;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 5;
+    }
+
+    body.theme-gold .envelope-flap {
+      border-top-color: #f59e0b;
+    }
+
+    body.theme-blue .envelope-flap {
+      border-top-color: #3b82f6;
+    }
+
+    .envelope.open .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .wax-seal {
+      width: 64px;
+      height: 64px;
+      background: radial-gradient(circle, #fbbf24 0%, #b45309 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      border: 3px solid #fef3c7;
+      z-index: 6;
+      animation: heartbeat 1.5s infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .envelope-text {
+      margin-top: 14px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .tap-hint {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 4px;
+    }
+
+    .letter-card {
+      width: 100%;
+      background: #ffffff;
+      color: #1e293b;
+      border-radius: var(--card-radius);
+      padding: 32px 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeInScale 0.5s ease forwards;
+    }
+
+    .letter-header {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .letter-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .letter-image-container {
+      width: 100%;
+      max-height: 220px;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .letter-image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .letter-body {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #334155;
+      margin-bottom: 22px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      width: 100%;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 14px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .letter-footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 14px;
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    .btn-react {
+      background: #eef2ff;
+      color: var(--primary);
+      border: 1px solid #c7d2fe;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s;
+    }
+
+    .btn-react:active {
+      transform: scale(1.15);
+    }
+
+    /* ==============================================================
+       TEMPLATE 3: TARJETA DIGITAL & REDES (BIO CARD)
+       ============================================================== */
+    .template-bio {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      color: #0f172a;
+      border-radius: var(--card-radius);
+      padding: 32px 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .bio-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      margin-bottom: 16px;
+      border: 4px solid white;
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+      overflow: hidden;
+    }
+
+    .bio-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bio-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .bio-role {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .bio-message {
+      font-size: 0.95rem;
+      color: #475569;
+      line-height: 1.6;
+      background: #f8fafc;
+      padding: 16px 18px;
+      border-radius: 16px;
+      width: 100%;
+      margin-bottom: 24px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-align: left;
+      border: 1px solid #f1f5f9;
+    }
+
+    .bio-actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bio-btn {
+      width: 100%;
+      padding: 13px 18px;
+      border-radius: 14px;
+      border: none;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .bio-btn-wa {
+      background: #25D366;
+      color: white;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+    }
+
+    .bio-btn-ig {
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      color: white;
+      box-shadow: 0 4px 14px rgba(253, 29, 29, 0.3);
+    }
+
+    .bio-btn-web {
+      background: #0f172a;
+      color: white;
+    }
+
+    .bio-btn:active {
+      transform: scale(0.98);
+    }
+
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.95) translateY(14px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Pie de página con créditos */
+    .page-footer {
+      margin-top: 28px;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .page-footer svg {
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas para partículas de fondo -->
+  <canvas id="particlesCanvas"></canvas>
+
+  <div class="app-wrapper">
+
+    <!-- CONTENEDOR 1: TEMPLATE EDITORIAL ELEGANTE -->
+    <div id="tplEditorial" class="template-editorial" style="display: none;">
+      <div class="editorial-badge" id="editorialBadge">Dedicatoria Exclusiva</div>
+      <h1 class="editorial-title" id="editorialTitle">Un Mensaje Especial</h1>
+      
+      <div id="editorialImgContainer" class="editorial-image-container" style="display: none;">
+        <img id="editorialImg" src="" alt="Foto">
+      </div>
+
+      <div class="editorial-divider"></div>
+      
+      <p class="editorial-quote" id="editorialMsg">
+        Quería prepararte este detalle especial en esta página web interactiva.
+      </p>
+
+      <div class="editorial-signature">
+        <span>Con aprecio de parte de</span>
+        <strong id="editorialSender">Jesús Orozco</strong>
+      </div>
+    </div>
+
+    <!-- CONTENEDOR 2: TEMPLATE SOBRE INTERACTIVO 3D -->
+    <div id="tplEnvelopeSection" class="template-envelope-section" style="display: none;">
+      <div class="envelope-wrapper" id="envelopeWrapper">
+        <div class="envelope" id="envelope">
+          <div class="envelope-flap" id="envelopeFlap"></div>
+          <div class="wax-seal" id="waxSeal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          </div>
+          <div class="envelope-text" id="envelopeHeader">Tienes un mensaje</div>
+          <div class="tap-hint">Toca el sobre para abrirlo</div>
+        </div>
+      </div>
+
+      <div class="letter-card" id="letterCard">
+        <div class="letter-header" id="cardRecipient">Para alguien especial</div>
+        <h1 class="letter-title" id="cardTitle">Un Mensaje Especial</h1>
+        
+        <div class="letter-image-container" id="cardImageContainer" style="display: none;">
+          <img src="" alt="Foto" id="cardImage">
+        </div>
+
+        <div class="letter-body" id="cardMessage">
+          Este mensaje fue creado especialmente para ti.
+        </div>
+
+        <div class="letter-footer">
+          <div>
+            <span>Con aprecio, </span>
+            <strong id="cardSender">Jesús Orozco</strong>
+          </div>
+          <button type="button" class="btn-react" id="btnHeart">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <span id="heartCount">1</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENEDOR 3: TEMPLATE TARJETA DIGITAL & REDES -->
+    <div id="tplBio" class="template-bio" style="display: none;">
+      <div class="bio-avatar" id="bioAvatar">
+        <svg id="bioAvatarIcon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <img id="bioAvatarImg" src="" alt="Avatar" style="display: none;">
+      </div>
+
+      <h1 class="bio-name" id="bioName">Jesús Orozco</h1>
+      <p class="bio-role" id="bioRole">Desarrollador & Creador</p>
+
+      <div class="bio-message" id="bioMsg">
+        ¡Hola! Bienvenido a mi tarjeta digital interactiva. Puedes comunicarte directamente conmigo a través de los enlaces de abajo.
+      </div>
+
+      <div class="bio-actions" id="bioActions">
+        <a id="btnBioWa" href="#" target="_blank" class="bio-btn bio-btn-wa" style="display: none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <span>Escribir por WhatsApp</span>
+        </a>
+        <a id="btnBioIg" href="#" target="_blank" class="bio-btn bio-btn-ig" style="display: none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          <span>Seguir en Instagram</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="page-footer">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+      <span>Desarrollado por Jesús Orozco • 30 de septiembre de 2026</span>
+    </footer>
+
+  </div>
+
+  <script>
+    (function() {
+      // 1. Leer parámetros URL
+      const hash = window.location.hash.substring(1);
+      const search = window.location.search.substring(1);
+      const query = search || hash;
+      const params = new URLSearchParams(query);
+
+      const tpl = params.get('tpl') || '1';
+      const to = params.get('to') || 'Para alguien especial';
+      const title = params.get('t') || 'Un Detalle Especial Para Ti';
+      const msg = params.get('m') || '¡Hola! Escaneaste este código y quería compartirte este mensaje especial.';
+      const from = params.get('from') || 'Jesús Orozco';
+      const theme = params.get('theme') || 'gold';
+      const img = params.get('img') || '';
+      const wa = params.get('wa') || '';
+      const ig = params.get('ig') || '';
+
+      // 2. Aplicar tema de fondo
+      if (theme === 'gold') document.body.classList.add('theme-gold');
+      if (theme === 'rose') document.body.classList.add('theme-rose');
+      if (theme === 'dark') document.body.classList.add('theme-dark');
+      if (theme === 'blue') document.body.classList.add('theme-blue');
+
+      // 3. Renderizar según el Template seleccionado
+      if (tpl === '2') {
+        // TEMPLATE 2: SOBRE INTERACTIVO 3D
+        document.getElementById('tplEnvelopeSection').style.display = 'flex';
+        document.getElementById('envelopeHeader').textContent = to;
+        document.getElementById('cardRecipient').textContent = to;
+        document.getElementById('cardTitle').textContent = title;
+        document.getElementById('cardMessage').textContent = msg;
+        document.getElementById('cardSender').textContent = from;
+
+        if (img) {
+          document.getElementById('cardImage').src = img;
+          document.getElementById('cardImageContainer').style.display = 'block';
+        }
+
+        const envelope = document.getElementById('envelope');
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const letterCard = document.getElementById('letterCard');
+
+        envelopeWrapper.addEventListener('click', () => {
+          envelope.classList.add('open');
+          setTimeout(() => {
+            envelopeWrapper.style.display = 'none';
+            letterCard.style.display = 'flex';
+          }, 450);
+        });
+
+        const btnHeart = document.getElementById('btnHeart');
+        const heartCount = document.getElementById('heartCount');
+        let count = 1;
+        btnHeart.addEventListener('click', () => {
+          count++;
+          heartCount.textContent = count;
+        });
+
+      } else if (tpl === '3') {
+        // TEMPLATE 3: TARJETA DIGITAL & REDES
+        document.getElementById('tplBio').style.display = 'flex';
+        document.getElementById('bioName').textContent = to || title;
+        document.getElementById('bioRole').textContent = from ? `Por ${from}` : 'Mensaje Personal';
+        document.getElementById('bioMsg').textContent = msg;
+
+        if (img) {
+          const aImg = document.getElementById('bioAvatarImg');
+          aImg.src = img;
+          aImg.style.display = 'block';
+          document.getElementById('bioAvatarIcon').style.display = 'none';
+        }
+
+        if (wa) {
+          const btnWa = document.getElementById('btnBioWa');
+          btnWa.href = `https://wa.me/${wa.replace(/[^0-9]/g, '')}`;
+          btnWa.style.display = 'flex';
+        }
+
+        if (ig) {
+          const btnIg = document.getElementById('btnBioIg');
+          const cleanIg = ig.replace(/^@/, '').trim();
+          btnIg.href = cleanIg.startsWith('http') ? cleanIg : `https://instagram.com/${cleanIg}`;
+          btnIg.style.display = 'flex';
+        }
+
+      } else {
+        // TEMPLATE 1: ELEGANTE & EDITORIAL
+        document.getElementById('tplEditorial').style.display = 'flex';
+        document.getElementById('editorialBadge').textContent = `Para: ${to}`;
+        document.getElementById('editorialTitle').textContent = title;
+        document.getElementById('editorialMsg').textContent = msg;
+        document.getElementById('editorialSender').textContent = from;
+
+        if (img) {
+          document.getElementById('editorialImg').src = img;
+          document.getElementById('editorialImgContainer').style.display = 'block';
+        }
+      }
+
+      // Partículas sutiles de fondo (Canvas)
+      const pCanvas = document.getElementById('particlesCanvas');
+      const pCtx = pCanvas.getContext('2d');
+      let particles = [];
+
+      function resize() {
+        pCanvas.width = window.innerWidth;
+        pCanvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < 28; i++) {
+          particles.push({
+            x: Math.random() * pCanvas.width,
+            y: Math.random() * pCanvas.height,
+            radius: Math.random() * 2 + 1,
+            speedY: Math.random() * 0.6 + 0.2,
+            speedX: (Math.random() - 0.5) * 0.4,
+            opacity: Math.random() * 0.5 + 0.2
+          });
+        }
+        animateParticles();
+      }
+
+      function animateParticles() {
+        pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.y -= p.speedY;
+          p.x += p.speedX;
+          if (p.y < 0) {
+            p.y = pCanvas.height;
+            p.x = Math.random() * pCanvas.width;
+          }
+          pCtx.beginPath();
+          pCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          pCtx.fillStyle = theme === 'gold' ? `rgba(245, 158, 11, ${p.opacity})` : `rgba(147, 197, 253, ${p.opacity})`;
+          pCtx.fill();
+        }
+        requestAnimationFrame(animateParticles);
+      }
+
+      initParticles();
+
+    })();
+  </script>
+</body>
+</html>
